@@ -1,9 +1,8 @@
-#define _POSIX_C_SOURCE 199309L
+#define _DEFAULT_SOURCE
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <curses.h>
-#include <time.h>
 #include <unistd.h>
 
 typedef enum direction {
@@ -52,10 +51,6 @@ int main(void) {
 	int apple_x = -1;
 	int apple_y = -1;
 
-	struct timespec last_update, last_draw;
-	clock_gettime(CLOCK_MONOTONIC_RAW, &last_update);
-	clock_gettime(CLOCK_MONOTONIC_RAW, &last_draw);
-
 	while (1) {
 		if (apple_x == -1) {
 			apple_x = rand() % scr_width;
@@ -65,29 +60,20 @@ int main(void) {
 		direction new_dir = get_input();
 		if (new_dir != DIR_NONE) dir = new_dir;
 
-		struct timespec now;
-		clock_gettime(CLOCK_MONOTONIC_RAW, &now);
-
-		uint64_t diff = (now.tv_sec - last_update.tv_sec) * 1000000 + (now.tv_nsec - last_update.tv_nsec) / 1000;
-		if (diff > 100000) {
-			move_snake(&s, dir);
-			if (s.head->x == apple_x && s.head->y == apple_y) {
-				score++;
-				apple_x = -1;
-				append_body(&s);
-			}
-
-			last_update = now;
+		move_snake(&s, dir);
+		if (s.head->x == apple_x && s.head->y == apple_y) {
+			score++;
+			apple_x = -1;
+			append_body(&s);
 		}
 
-		diff = (now.tv_sec - last_draw.tv_sec) * 1000000 + (now.tv_nsec - last_draw.tv_nsec) / 1000;
-		if (diff > 30000) {
-			clear();
-			draw_snake(&s);
-			mvaddch(apple_y, apple_x, APPLE);
-			mvprintw(0, 0, "Score: %d", score);
-			refresh();
-		}
+		clear();
+		draw_snake(&s);
+		mvaddch(apple_y, apple_x, APPLE);
+		mvprintw(0, 0, "Score: %d", score);
+		refresh();
+
+		usleep(70000);
 	}
 
 	delete_snake(&s);

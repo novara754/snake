@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <curses.h>
 #include <unistd.h>
 
@@ -25,6 +26,7 @@ typedef struct snake {
 } snake;
 
 direction get_input(void);
+bool opposite(direction dir1, direction dir2);
 snake_body *new_body(snake_body *prev, int x, int y);
 void append_body(snake *s);
 snake make_snake(int x, int y);
@@ -58,7 +60,9 @@ int main(void) {
 		}
 
 		direction new_dir = get_input();
-		if (new_dir != DIR_NONE) dir = new_dir;
+		if (new_dir != DIR_NONE && !(score > 1 && opposite(dir, new_dir))) {
+			dir = new_dir;
+		}
 
 		move_snake(&s, dir);
 		if (s.head->x == apple_x && s.head->y == apple_y) {
@@ -98,6 +102,14 @@ direction get_input(void) {
 		default:
 			return DIR_NONE;
 	}
+}
+
+bool opposite(direction dir1, direction dir2) {
+	if (dir1 == DIR_UP && dir2 == DIR_DOWN) return true;
+	else if (dir1 == DIR_DOWN && dir2 == DIR_UP) return true;
+	else if (dir1 == DIR_LEFT && dir2 == DIR_RIGHT) return true;
+	else if (dir1 == DIR_RIGHT && dir2 == DIR_LEFT) return true;
+	else return false;
 }
 
 snake_body* new_body(snake_body *prev, int x, int y) {

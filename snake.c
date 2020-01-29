@@ -42,6 +42,7 @@ int main(void) {
 	noecho();
 	nodelay(stdscr, TRUE);
 	keypad(stdscr, TRUE);
+	curs_set(FALSE);
 
 	const int scr_width = getmaxx(stdscr);
 	const int scr_height = getmaxy(stdscr);

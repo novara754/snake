@@ -37,6 +37,8 @@ void delete_snake(snake *s);
 const char SNAKE_BODY = '#';
 const char APPLE = 'O';
 
+int SCR_WIDTH, SCR_HEIGHT;
+
 int main(void) {
 	initscr();
 	cbreak();
@@ -45,9 +47,10 @@ int main(void) {
 	keypad(stdscr, TRUE);
 	curs_set(FALSE);
 
-	const int scr_width = getmaxx(stdscr);
-	const int scr_height = getmaxy(stdscr);
-	snake s = make_snake(scr_width / 2, scr_height / 2);
+	SCR_WIDTH = getmaxx(stdscr);
+	SCR_HEIGHT = getmaxy(stdscr);
+	
+	snake s = make_snake(SCR_WIDTH / 2, SCR_HEIGHT / 2);
 	direction dir = DIR_UP;
 	int score = 0;
 	int apple_x = -1;
@@ -55,8 +58,8 @@ int main(void) {
 
 	while (1) {
 		if (apple_x == -1) {
-			apple_x = rand() % scr_width;
-			apple_y = rand() % scr_height;
+			apple_x = 1 + rand() % (SCR_WIDTH - 2);
+			apple_y = 1 + rand() % (SCR_HEIGHT - 2);
 		}
 
 		direction new_dir = get_input();
@@ -172,6 +175,11 @@ void move_snake(snake *s, direction dir) {
 			default: // unreachable
 				break;
 		}
+
+		if (last->x < 0) last->x = SCR_WIDTH;
+		else if (last->x >= SCR_WIDTH) last->x = 0;
+		if (last->y < 0) last->y = SCR_HEIGHT;
+		else if (last->y >= SCR_HEIGHT) last->y = 0; 
 
 		last->next = s->head;
 		s->head->prev = last;

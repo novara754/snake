@@ -20,7 +20,7 @@ $ ./snake
 ## Controls
 
 To steer the snake you can use WASD or simply the arrow keys. Move the Snake (represented by `#`)
-to collect apples (`O`). You can press Q or Ctrl+C to quit the game.
+to collect apples (`O`). You can press Q to quit the game.
 
 ## Screenshot
 

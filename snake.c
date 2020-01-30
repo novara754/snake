@@ -12,6 +12,7 @@ typedef enum direction {
 	DIR_LEFT,
 	DIR_RIGHT,
 	DIR_NONE,
+	QUIT,
 } direction;
 
 typedef struct snake_body {
@@ -49,7 +50,7 @@ int main(void) {
 
 	SCR_WIDTH = getmaxx(stdscr);
 	SCR_HEIGHT = getmaxy(stdscr);
-	
+
 	snake s = make_snake(SCR_WIDTH / 2, SCR_HEIGHT / 2);
 	direction dir = DIR_UP;
 	int score = 0;
@@ -63,6 +64,11 @@ int main(void) {
 		}
 
 		direction new_dir = get_input();
+
+		if (new_dir == QUIT) {
+			break;
+		}
+
 		if (new_dir != DIR_NONE && !(score > 1 && opposite(dir, new_dir))) {
 			dir = new_dir;
 		}
@@ -102,6 +108,8 @@ direction get_input(void) {
 		case 'd':
 		case KEY_RIGHT:
 			return DIR_RIGHT;
+		case 'q':
+			return QUIT;
 		default:
 			return DIR_NONE;
 	}
@@ -179,7 +187,7 @@ void move_snake(snake *s, direction dir) {
 		if (last->x < 0) last->x = SCR_WIDTH;
 		else if (last->x >= SCR_WIDTH) last->x = 0;
 		if (last->y < 0) last->y = SCR_HEIGHT;
-		else if (last->y >= SCR_HEIGHT) last->y = 0; 
+		else if (last->y >= SCR_HEIGHT) last->y = 0;
 
 		last->next = s->head;
 		s->head->prev = last;

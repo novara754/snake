@@ -137,6 +137,7 @@ snake_body* new_body(snake_body *prev, int x, int y) {
 	node->x = x;
 	node->y = y;
 	node->prev = prev;
+	if (prev != NULL) prev->next = node;
 	node->next = NULL;
 	return node;
 }

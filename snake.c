@@ -86,7 +86,7 @@ int main(void) {
 		mvprintw(0, 0, "Score: %d", score);
 		refresh();
 
-		usleep(70000);
+		usleep(90000 - (score * 700));
 	}
 
 	delete_snake(&s);

@@ -44,8 +44,6 @@ const char APPLE = 'O';
 const short APPLE_COLOR_I = 2;
 const short APPLE_COLOR = COLOR_RED;
 
-int SCR_WIDTH, SCR_HEIGHT;
-
 int main(void) {
 	initscr();
 	cbreak();
@@ -58,18 +56,15 @@ int main(void) {
 	init_pair(SNAKE_COLOR_I, SNAKE_COLOR, COLOR_BLACK);
 	init_pair(APPLE_COLOR_I, APPLE_COLOR, COLOR_BLACK);
 
-	SCR_WIDTH = getmaxx(stdscr);
-	SCR_HEIGHT = getmaxy(stdscr);
-
-	snake s = make_snake(SCR_WIDTH / 2, SCR_HEIGHT / 2);
+	snake s = make_snake(COLS / 2, LINES / 2);
 	int score = 0;
 	int apple_x = -1;
 	int apple_y = -1;
 
 	while (1) {
-		if (apple_x == -1) {
-			apple_x = 1 + rand() % (SCR_WIDTH - 2);
-			apple_y = 1 + rand() % (SCR_HEIGHT - 2);
+		if (apple_x == -1 || apple_x >= COLS || apple_y >= LINES) {
+			apple_x = 1 + rand() % (COLS - 2);
+			apple_y = 1 + rand() % (LINES - 2);
 		}
 
 		direction new_dir = get_input();
@@ -201,10 +196,10 @@ void move_snake(snake *s) {
 				break;
 		}
 
-		if (last->x < 0) last->x = SCR_WIDTH;
-		else if (last->x >= SCR_WIDTH) last->x = 0;
-		if (last->y < 0) last->y = SCR_HEIGHT;
-		else if (last->y >= SCR_HEIGHT) last->y = 0;
+		if (last->x < 0) last->x = COLS;
+		else if (last->x >= COLS) last->x = 0;
+		if (last->y < 0) last->y = LINES;
+		else if (last->y >= LINES) last->y = 0;
 
 		last->next = s->head;
 		s->head->prev = last;
@@ -227,6 +222,11 @@ void move_snake(snake *s) {
 			default: // unreachable
 				break;
 		}
+
+		if (s->head->x < 0) s->head->x = COLS;
+		else if (s->head->x >= COLS) s->head->x = 0;
+		if (s->head->y < 0) s->head->y = LINES;
+		else if (s->head->y >= LINES) s->head->y = 0;
 	}
 }
 

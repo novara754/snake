@@ -29,7 +29,6 @@ to collect apples (`O`). You can press Q or Ctrl+C to quit the game.
 ## Bugs
 
  - Snake can collide with itself with no repurcussions
- - Making the console window smaller will lead to things happening off-screen
 
 ## License
 

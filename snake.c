@@ -36,7 +36,11 @@ void move_snake(snake *s, direction new_dir);
 void delete_snake(snake *s);
 
 const char SNAKE_BODY = '#';
+const short SNAKE_COLOR_I = 1;
+const short SNAKE_COLOR = COLOR_GREEN;
 const char APPLE = 'O';
+const short APPLE_COLOR_I = 2;
+const short APPLE_COLOR = COLOR_RED;
 
 int SCR_WIDTH, SCR_HEIGHT;
 
@@ -47,6 +51,10 @@ int main(void) {
 	nodelay(stdscr, TRUE);
 	keypad(stdscr, TRUE);
 	curs_set(FALSE);
+	start_color();
+
+	init_pair(SNAKE_COLOR_I, SNAKE_COLOR, COLOR_BLACK);
+	init_pair(APPLE_COLOR_I, APPLE_COLOR, COLOR_BLACK);
 
 	SCR_WIDTH = getmaxx(stdscr);
 	SCR_HEIGHT = getmaxy(stdscr);
@@ -81,8 +89,13 @@ int main(void) {
 		}
 
 		clear();
+
 		draw_snake(&s);
+
+		attron(COLOR_PAIR(APPLE_COLOR_I));
 		mvaddch(apple_y, apple_x, APPLE);
+		attroff(COLOR_PAIR(APPLE_COLOR_I));
+
 		mvprintw(0, 0, "Score: %d", score);
 		refresh();
 
@@ -150,10 +163,11 @@ void append_body(snake *s) {
 }
 
 void draw_snake(snake *s) {
+	attron(COLOR_PAIR(SNAKE_COLOR_I));
 	for (snake_body *node = s->head; node != NULL; node = node->next) {
 		mvaddch(node->y, node->x, SNAKE_BODY);
 	}
-	move(0, 0);
+	attroff(COLOR_PAIR(SNAKE_COLOR_I));
 }
 
 void move_snake(snake *s, direction dir) {

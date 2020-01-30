@@ -231,7 +231,10 @@ void move_snake(snake *s) {
 }
 
 void delete_snake(snake *s) {
-	for (snake_body *node = s->head; node != NULL; node = node->next) {
+	snake_body *node = s->head;
+	while (node != NULL) {
+		snake_body *next = node->next;
 		free(node);
+		node = next;
 	}
 }

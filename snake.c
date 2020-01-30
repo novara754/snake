@@ -24,6 +24,7 @@ typedef struct snake_body {
 typedef struct snake {
 	snake_body *head;
 	snake_body *last;
+	direction dir;
 } snake;
 
 direction get_input(void);
@@ -32,10 +33,11 @@ snake_body *new_body(snake_body *prev, int x, int y);
 void append_body(snake *s);
 snake make_snake(int x, int y);
 void draw_snake(snake *s);
-void move_snake(snake *s, direction new_dir);
+void move_snake(snake *s);
 void delete_snake(snake *s);
 
 const char SNAKE_BODY = '#';
+const char SNAKE_HEADS[4] = { '^', 'V', '<', '>' };
 const short SNAKE_COLOR_I = 1;
 const short SNAKE_COLOR = COLOR_GREEN;
 const char APPLE = 'O';
@@ -60,7 +62,6 @@ int main(void) {
 	SCR_HEIGHT = getmaxy(stdscr);
 
 	snake s = make_snake(SCR_WIDTH / 2, SCR_HEIGHT / 2);
-	direction dir = DIR_UP;
 	int score = 0;
 	int apple_x = -1;
 	int apple_y = -1;
@@ -77,11 +78,11 @@ int main(void) {
 			break;
 		}
 
-		if (new_dir != DIR_NONE && !(score > 1 && opposite(dir, new_dir))) {
-			dir = new_dir;
+		if (new_dir != DIR_NONE && !(score > 1 && opposite(s.dir, new_dir))) {
+			s.dir = new_dir;
 		}
 
-		move_snake(&s, dir);
+		move_snake(&s);
 		if (s.head->x == apple_x && s.head->y == apple_y) {
 			score++;
 			apple_x = -1;
@@ -150,6 +151,7 @@ snake make_snake(int x, int y) {
 	return (snake){
 		.head = head,
 		.last = NULL,
+		.dir = DIR_UP,
 	};
 }
 
@@ -164,20 +166,21 @@ void append_body(snake *s) {
 
 void draw_snake(snake *s) {
 	attron(COLOR_PAIR(SNAKE_COLOR_I));
-	for (snake_body *node = s->head; node != NULL; node = node->next) {
+	mvaddch(s->head->y, s->head->x, SNAKE_HEADS[s->dir]);
+	for (snake_body *node = s->head->next; node != NULL; node = node->next) {
 		mvaddch(node->y, node->x, SNAKE_BODY);
 	}
 	attroff(COLOR_PAIR(SNAKE_COLOR_I));
 }
 
-void move_snake(snake *s, direction dir) {
+void move_snake(snake *s) {
 	if (s->last != NULL) {
 		snake_body *last = s->last;
 		snake_body *second_last = last->prev;
 		second_last->next = NULL;
 		last->prev = NULL;
 
-		switch (dir) {
+		switch (s->dir) {
 			case DIR_UP:
 				last->x = s->head->x;
 				last->y = s->head->y - 1;
@@ -208,7 +211,7 @@ void move_snake(snake *s, direction dir) {
 		s->head = last;
 		s->last = second_last;
 	} else {
-		switch (dir) {
+		switch (s->dir) {
 			case DIR_UP:
 				s->head->y -= 1;
 				break;
